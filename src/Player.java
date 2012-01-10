@@ -1,4 +1,3 @@
-package Game0_0_02;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Color;

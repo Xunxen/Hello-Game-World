@@ -1,5 +1,3 @@
-package Game0_0_02;
-
 import javax.swing.JFrame;
 import java.awt.Graphics;
 import java.awt.Image;

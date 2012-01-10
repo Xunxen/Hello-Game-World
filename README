@@ -1,5 +1,1 @@
 This game is intended as an exercise in game programming for a beginner programmer.
-
-For those wishing to use it to further their own skills beware, as I have absolutely no comments in my code.
-those wishing to play this simple game, the controls are arrow keys to move and select menu options, esc to pause, and enter to select a highlighted menu option.
-A few things may not work quite right yet, as only the Player class uses insets other than the top, so anyone not using a mac may notice the Player can go a bit off-screen at the sides and bottom. I intend to fix this soon. very soon...

@@ -13,8 +13,8 @@ public class Engine extends JFrame implements Runnable, KeyListener{
 
     Player p;
     Enemy[] e;
-    Image dbi;
-    Graphics dbg;
+    Image dbi,dbmi;
+    Graphics dbg,dbmg;
     Thread t;
     int x,y;
     long time;
@@ -91,7 +91,7 @@ public class Engine extends JFrame implements Runnable, KeyListener{
             else repaint();
 
             try{
-                Thread.sleep(20);
+                t.sleep(20);
             }catch(InterruptedException e){}
 
             Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
@@ -101,59 +101,53 @@ public class Engine extends JFrame implements Runnable, KeyListener{
 
     private void menuState(Graphics g){
 
-            int a=getWidth()/2;
-            int b=getHeight()/2;
             g.setColor(Color.black);
-            g.fillRect(a-50,b-70,100,140);
+            g.fillRect(0,0,100,140);
             if(menuIndex==0) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(MENUOPTIONS[0],a-40,b-50);
+            g.drawString(MENUOPTIONS[0],10,20);
             if(menuIndex==1) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(MENUOPTIONS[1],a-40,b-20);
+            g.drawString(MENUOPTIONS[1],10,50);
             if(menuIndex==2) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(MENUOPTIONS[2],a-40,b+10);
+            g.drawString(MENUOPTIONS[2],10,80);
 
     }
 
     private void pausedState(Graphics g){
 
-            int a=getWidth()/2;
-            int b=getHeight()/2;
             g.setColor(Color.black);
-            g.fillRect(a-50,b-70,100,140);
+            g.fillRect(0,0,100,140);
             if(pauseIndex==0) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(PAUSEOPTIONS[0],a-40,b-50);
+            g.drawString(PAUSEOPTIONS[0],10,20);
             if(pauseIndex==1) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(PAUSEOPTIONS[1],a-40,b-20);
+            g.drawString(PAUSEOPTIONS[1],10,50);
             if(pauseIndex==2) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(PAUSEOPTIONS[2],a-40,b+10);
+            g.drawString(PAUSEOPTIONS[2],10,80);
             if(pauseIndex==3) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(PAUSEOPTIONS[3],a-40,b+40);
+            g.drawString(PAUSEOPTIONS[3],10,110);
 
         }
 
     private void optionState(Graphics g){
 
-            int a=getWidth()/2;
-            int b=getHeight()/2;
             g.setColor(Color.black);
-            g.fillRect(a-50,b-70,100,140);
+            g.fillRect(0,0,100,140);
             g.setColor(Color.white);
             if(optionIndex==0) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(DIFFICULTIES[Difficulty],a-40,b-50);
+            g.drawString(DIFFICULTIES[Difficulty],10,20);
             if(optionIndex==1) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(OPTIONS[1]+eCount,a-40,b-20);
+            g.drawString(OPTIONS[1]+eCount,10,50);
             if(optionIndex==2) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(OPTIONS[2],a-40,b+10);
+            g.drawString(OPTIONS[2],10,80);
 
         }
 
@@ -181,10 +175,10 @@ public class Engine extends JFrame implements Runnable, KeyListener{
 
             }
             
-            if((e[i].getX()<p.getX()+p.getR()&&
-                e[i].getX()>p.getX()-p.getR())&&
-                (e[i].getY()<p.getY()+p.getR()&&
-                e[i].getY()>p.getY()-p.getR())){
+            if((e[i].getX()-e[i].getR()<p.getX()+p.getR()&&
+                e[i].getX()+e[i].getR()>p.getX()-p.getR())&&
+                (e[i].getY()-e[i].getR()<p.getY()+p.getR()&&
+                e[i].getY()+e[i].getR()>p.getY()-p.getR())){
                 
                 ++points;
                 p.reset();
@@ -206,15 +200,17 @@ public class Engine extends JFrame implements Runnable, KeyListener{
 
     public void paint(Graphics g){
     
-        int a=getWidth()/2;
-        int b=getHeight()/2;
-        if(g==null) return;
-        g.setColor(Color.gray);
-        g.drawString("Captured "+points+" times.",10,28+getInsets().top);
-        p.paint(g);
-        for(int i=0;i<e.length;i++)
-        e[i].paint(g);
-        if(state==States.MENU) menuState(g);
+        if(state==States.RUNNING){
+
+            if(g==null) return;
+            g.setColor(Color.gray);
+            g.drawString("Captured "+points+" times.",10+getInsets().left,28+getInsets().top);
+            p.paint(g);
+            for(int i=0;i<e.length;i++)
+            e[i].paint(g);
+
+        }
+        else if(state==States.MENU) menuState(g);
         else if(state==States.PAUSED) pausedState(g);
         else if(state==States.OPTION) optionState(g);
 
@@ -233,16 +229,42 @@ public class Engine extends JFrame implements Runnable, KeyListener{
         
             dbi=createImage(getSize().width,getSize().height);
             dbg=dbi.getGraphics();
+
+            dbg.setColor(getBackground());
+            dbg.fillRect(0,0,getSize().width,getSize().height);
+        
+            g.drawImage(dbi,0,0,this);
+
         
         }
+
+        if(state==States.RUNNING){
+
+            dbg.setColor(getBackground());
+            dbg.fillRect(0,0,getSize().width,getSize().height);
         
-        dbg.setColor(getBackground());
-        dbg.fillRect(0,0,getSize().width,getSize().height);
+
+            dbg.setColor(getForeground());
+            paint(dbg);
         
-        dbg.setColor(getForeground());
-        paint(dbg);
-        
-        g.drawImage(dbi,0,0,this);
+            g.drawImage(dbi,0,0,this);
+
+        }
+        else{
+
+            int a=getWidth()/2;
+            int b=getHeight()/2;
+            if(dbmi==null){
+
+                dbmi=createImage(100,140);
+                dbmg=dbmi.getGraphics();
+
+            }
+
+            paint(dbmg);
+            g.drawImage(dbmi,a-50,b-170,this);
+
+        }
     
     }
     
@@ -262,7 +284,8 @@ public class Engine extends JFrame implements Runnable, KeyListener{
         }
         else if(state==States.PAUSED){
 
-            if(ke.getKeyCode()==KeyEvent.VK_DOWN&&pauseIndex<3){
+            if(ke.getKeyCode()==KeyEvent.VK_DOWN
+                &&pauseIndex<PAUSEOPTIONS.length-1){
 
                 pauseIndex++;
                 repaint();
@@ -319,6 +342,13 @@ public class Engine extends JFrame implements Runnable, KeyListener{
 
             if(ke.getKeyCode()==KeyEvent.VK_ESCAPE){
 
+                if(prevState==States.MENU&&eCount!=e.length){
+
+                    e=new Enemy[eCount];
+                    for(int i=0;i<e.length;i++)
+                        e[i]=new Enemy(getSize(),getInsets(),Difficulty);
+
+                }
                 States temp=state;
                 state=prevState;
                 prevState=temp;
@@ -332,7 +362,7 @@ public class Engine extends JFrame implements Runnable, KeyListener{
                 repaint();
 
             }
-            if(ke.getKeyCode()==KeyEvent.VK_DOWN&&optionIndex<2){
+            if(ke.getKeyCode()==KeyEvent.VK_DOWN&&optionIndex<OPTIONS.length-1){
 
                 optionIndex++;
                 repaint();
@@ -370,6 +400,15 @@ public class Engine extends JFrame implements Runnable, KeyListener{
                 for(int i=0;i<e.length;i++){
                     e[i].setDifficulty(Difficulty);
                 }
+
+                if(prevState==States.MENU&&eCount!=e.length){
+
+                    e=new Enemy[eCount];
+                    for(int i=0;i<e.length;i++)
+                        e[i]=new Enemy(getSize(),getInsets(),Difficulty);
+
+                }
+ 
                 States temp=state;
                 state=prevState;
                 prevState=temp;
@@ -381,9 +420,10 @@ public class Engine extends JFrame implements Runnable, KeyListener{
         }
         else if(state==States.MENU){
 
-            if(ke.getKeyCode()==KeyEvent.VK_DOWN&&menuIndex<MENUOPTIONS.length){
+            if(ke.getKeyCode()==KeyEvent.VK_DOWN
+                &&menuIndex<MENUOPTIONS.length-1){
 
-                menuIndex++;
+                ++menuIndex;
                 repaint();
 
             }

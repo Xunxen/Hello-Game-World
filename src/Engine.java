@@ -102,7 +102,7 @@ public class Engine extends JFrame implements Runnable, KeyListener{
     private void menuState(Graphics g){
 
             g.setColor(Color.black);
-            g.fillRect(0,0,100,140);
+            g.fillRect(0,0,120,140);
             if(menuIndex==0) g.setColor(Color.white);
             else g.setColor(Color.gray);
             g.drawString(MENUOPTIONS[0],10,20);
@@ -118,7 +118,7 @@ public class Engine extends JFrame implements Runnable, KeyListener{
     private void pausedState(Graphics g){
 
             g.setColor(Color.black);
-            g.fillRect(0,0,100,140);
+            g.fillRect(0,0,120,140);
             if(pauseIndex==0) g.setColor(Color.white);
             else g.setColor(Color.gray);
             g.drawString(PAUSEOPTIONS[0],10,20);
@@ -137,7 +137,7 @@ public class Engine extends JFrame implements Runnable, KeyListener{
     private void optionState(Graphics g){
 
             g.setColor(Color.black);
-            g.fillRect(0,0,100,140);
+            g.fillRect(0,0,120,140);
             g.setColor(Color.white);
             if(optionIndex==0) g.setColor(Color.white);
             else g.setColor(Color.gray);
@@ -256,13 +256,13 @@ public class Engine extends JFrame implements Runnable, KeyListener{
             int b=getHeight()/2;
             if(dbmi==null){
 
-                dbmi=createImage(100,140);
+                dbmi=createImage(120,140);
                 dbmg=dbmi.getGraphics();
 
             }
 
             paint(dbmg);
-            g.drawImage(dbmi,a-50,b-170,this);
+            g.drawImage(dbmi,a-60,b-70,this);
 
         }
     

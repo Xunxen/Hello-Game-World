@@ -210,11 +210,7 @@ public class Engine extends JFrame implements Runnable, KeyListener{
             e[i].paint(g);
 
         }
-        else if(state==States.MENU) menuState(g);
-        else if(state==States.PAUSED) pausedState(g);
-        else if(state==States.OPTION) optionState(g);
-
-    
+            
     }
     
     public void repaint(){
@@ -243,8 +239,6 @@ public class Engine extends JFrame implements Runnable, KeyListener{
             dbg.setColor(getBackground());
             dbg.fillRect(0,0,getSize().width,getSize().height);
         
-
-            dbg.setColor(getForeground());
             paint(dbg);
         
             g.drawImage(dbi,0,0,this);
@@ -261,7 +255,9 @@ public class Engine extends JFrame implements Runnable, KeyListener{
 
             }
 
-            paint(dbmg);
+            if(state==States.MENU) menuState(dbmg);
+				else if(state==States.PAUSED) pausedState(dbmg);
+				else if(state==States.OPTION) optionState(dbmg);
             g.drawImage(dbmi,a-60,b-70,this);
 
         }

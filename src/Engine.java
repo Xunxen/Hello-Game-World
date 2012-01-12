@@ -6,10 +6,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.Font;
 import java.util.Vector;
 
-public class Engine extends JFrame implements Runnable, KeyListener{
+public class Engine extends JFrame implements Runnable, KeyListener, MouseListener{
 
     Player p;
     Enemy[] e;
@@ -20,6 +22,7 @@ public class Engine extends JFrame implements Runnable, KeyListener{
     long time;
     int points,eCount;
     int Difficulty;
+	 LinkedList<Bullet> pB;
     private enum States{
 
         MENU,
@@ -52,6 +55,7 @@ public class Engine extends JFrame implements Runnable, KeyListener{
         e=new Enemy[eCount];
                 
         addKeyListener(this);
+		  addMouseListener(this);
         addComponentListener(new ComponentAdapter(){
         
             public void componentResized(ComponentEvent ce){
@@ -71,6 +75,7 @@ public class Engine extends JFrame implements Runnable, KeyListener{
         for(int i=0;i<e.length;i++)
             e[i]=new Enemy(getSize(),getInsets(),Difficulty);
         
+		  pB=new LinkedList<Bullet>();
         x=p.getX();
         y=p.getY();
         
@@ -157,6 +162,28 @@ public class Engine extends JFrame implements Runnable, KeyListener{
 
         p.move();
 
+        pB.first();
+        while(pB.getData()!=null){
+		  
+            pB.getData().move();
+            for(int i=0;i<e.length;i++){
+				
+                if((e[i].getX()-e[i].getR()<pB.getData().getX()+pB.getData().getR()&&
+                e[i].getX()+e[i].getR()>pB.getData().getX()-pB.getData().getR())&&
+                (e[i].getY()-e[i].getR()<pB.getData().getY()+pB.getData().getR()&&
+                e[i].getY()+e[i].getR()>pB.getData().getY()-pB.getData().getR())){
+
+                    ++points;
+                    pB.remove();
+                    e[i].reset();
+
+                }
+
+            }
+
+        pB.next();
+		  
+        }
             
         for(int i=0;i<e.length;i++){
 
@@ -179,8 +206,7 @@ public class Engine extends JFrame implements Runnable, KeyListener{
                 e[i].getX()+e[i].getR()>p.getX()-p.getR())&&
                 (e[i].getY()-e[i].getR()<p.getY()+p.getR()&&
                 e[i].getY()+e[i].getR()>p.getY()-p.getR())){
-                
-                ++points;
+
                 p.reset();
                 e[i].reset();
                 
@@ -204,10 +230,15 @@ public class Engine extends JFrame implements Runnable, KeyListener{
 
             if(g==null) return;
             g.setColor(Color.gray);
-            g.drawString("Captured "+points+" times.",10+getInsets().left,28+getInsets().top);
+            g.drawString("Defeated "+points+" enemies.",10+getInsets().left,28+getInsets().top);
             p.paint(g);
             for(int i=0;i<e.length;i++)
-            e[i].paint(g);
+                e[i].paint(g);
+            pB.first();
+            while(pB.getData()!=null){
+                pB.getData().paint(g);
+                pB.next();
+            }
 
         }
             
@@ -267,10 +298,10 @@ public class Engine extends JFrame implements Runnable, KeyListener{
     public void keyPressed(KeyEvent ke){
     
         if(state==States.RUNNING){
-            if(ke.getKeyCode()==KeyEvent.VK_UP) p.upPress();
-            if(ke.getKeyCode()==KeyEvent.VK_DOWN) p.downPress();
-            if(ke.getKeyCode()==KeyEvent.VK_LEFT) p.leftPress();
-            if(ke.getKeyCode()==KeyEvent.VK_RIGHT) p.rightPress();
+            if(ke.getKeyCode()==KeyEvent.VK_W) p.upPress();
+            if(ke.getKeyCode()==KeyEvent.VK_S) p.downPress();
+            if(ke.getKeyCode()==KeyEvent.VK_A) p.leftPress();
+            if(ke.getKeyCode()==KeyEvent.VK_D) p.rightPress();
             if(ke.getKeyCode()==KeyEvent.VK_ESCAPE){
 
                 prevState=state;
@@ -280,14 +311,14 @@ public class Engine extends JFrame implements Runnable, KeyListener{
         }
         else if(state==States.PAUSED){
 
-            if(ke.getKeyCode()==KeyEvent.VK_DOWN
+            if(ke.getKeyCode()==KeyEvent.VK_S
                 &&pauseIndex<PAUSEOPTIONS.length-1){
 
                 pauseIndex++;
                 repaint();
 
             }
-            if(ke.getKeyCode()==KeyEvent.VK_UP&&pauseIndex>0){
+            if(ke.getKeyCode()==KeyEvent.VK_W&&pauseIndex>0){
 
                 pauseIndex--;
                 repaint();
@@ -323,6 +354,7 @@ public class Engine extends JFrame implements Runnable, KeyListener{
                     e=new Enemy[eCount];
                     for(int i=0;i<e.length;i++)
                         e[i]=new Enemy(getSize(),getInsets(),Difficulty);
+                    pB=new LinkedList<Bullet>();
                     p.reset();
                     prevState=state;
                     state=States.RUNNING;
@@ -352,39 +384,39 @@ public class Engine extends JFrame implements Runnable, KeyListener{
                 repaint();
 
             }
-            if(ke.getKeyCode()==KeyEvent.VK_UP&&optionIndex>0){
+            if(ke.getKeyCode()==KeyEvent.VK_W&&optionIndex>0){
 
                 optionIndex--;
                 repaint();
 
             }
-            if(ke.getKeyCode()==KeyEvent.VK_DOWN&&optionIndex<OPTIONS.length-1){
+            if(ke.getKeyCode()==KeyEvent.VK_S&&optionIndex<OPTIONS.length-1){
 
                 optionIndex++;
                 repaint();
 
             }
-            if(ke.getKeyCode()==KeyEvent.VK_LEFT&&optionIndex==0&&Difficulty>Enemy.IMMOBILE){
+            if(ke.getKeyCode()==KeyEvent.VK_A&&optionIndex==0&&Difficulty>Enemy.IMMOBILE){
 
                 Difficulty--;
                 repaint();
 
             }
-            if(ke.getKeyCode()==KeyEvent.VK_RIGHT&&optionIndex==0&&Difficulty<Enemy.IMPOSSIBLE){
+            if(ke.getKeyCode()==KeyEvent.VK_D&&optionIndex==0&&Difficulty<Enemy.IMPOSSIBLE){
 
                 ++Difficulty;
                 repaint();
 
             }
 
-            if(ke.getKeyCode()==KeyEvent.VK_LEFT&&optionIndex==1&&eCount>1){
+            if(ke.getKeyCode()==KeyEvent.VK_A&&optionIndex==1&&eCount>1){
 
                 --eCount;
                 repaint();
 
             }
 
-            if(ke.getKeyCode()==KeyEvent.VK_RIGHT&&optionIndex==1&&eCount<100){
+            if(ke.getKeyCode()==KeyEvent.VK_D&&optionIndex==1&&eCount<100){
 
                 ++eCount;
                 repaint();
@@ -416,14 +448,14 @@ public class Engine extends JFrame implements Runnable, KeyListener{
         }
         else if(state==States.MENU){
 
-            if(ke.getKeyCode()==KeyEvent.VK_DOWN
+            if(ke.getKeyCode()==KeyEvent.VK_S
                 &&menuIndex<MENUOPTIONS.length-1){
 
                 ++menuIndex;
                 repaint();
 
             }
-            if(ke.getKeyCode()==KeyEvent.VK_UP&&menuIndex>0){
+            if(ke.getKeyCode()==KeyEvent.VK_W&&menuIndex>0){
 
                 menuIndex--;
                 repaint();
@@ -456,13 +488,27 @@ public class Engine extends JFrame implements Runnable, KeyListener{
     
     public void keyReleased(KeyEvent e){
     
-        if(e.getKeyCode()==KeyEvent.VK_UP) p.upRelease();
-        if(e.getKeyCode()==KeyEvent.VK_DOWN) p.downRelease();
-        if(e.getKeyCode()==KeyEvent.VK_LEFT) p.leftRelease();
-        if(e.getKeyCode()==KeyEvent.VK_RIGHT) p.rightRelease();
+        if(e.getKeyCode()==KeyEvent.VK_W) p.upRelease();
+        if(e.getKeyCode()==KeyEvent.VK_S) p.downRelease();
+        if(e.getKeyCode()==KeyEvent.VK_A) p.leftRelease();
+        if(e.getKeyCode()==KeyEvent.VK_D) p.rightRelease();
     
     }
     
     public void keyTyped(KeyEvent e){}
+    public void mouseClicked(MouseEvent e){}
+    public void mouseEntered(MouseEvent e){}
+    public void mouseExited(MouseEvent e){}
+	
+    public void mousePressed(MouseEvent e){
+	 
+        pB.append(p.fire(e.getX(),e.getY()));
+	 
+    }
+	public void mouseReleased(MouseEvent e){
+	 
+		p.enableFire();
+	 
+	}
 
 }

@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.util.Random;
 
-public class Enemy extends Player{
+class Enemy extends Player{
 
 	int v, r;
 	int Bx, By;

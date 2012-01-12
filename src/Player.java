@@ -3,11 +3,12 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Insets;
 
-public class Player{
+class Player{
 
     protected int x,y;
     int r,v;
-    Boolean left, right, up, down;
+    boolean left, right, up, down;
+	 boolean canFire;
     int Bx, By;
     Insets i;
 
@@ -17,6 +18,8 @@ public class Player{
         right=false;
         up=false;
         down=false;
+		  
+		  canFire=true;
 
         Bx=d.width;
         By=d.height;
@@ -158,5 +161,29 @@ public class Player{
         y=By/2;
     
     }
+	 
+	 public Bullet fire(int Tx, int Ty){
+	 
+	 	return new Bullet(x,y,Tx,Ty,3,0,-1);
+	 
+	 }
+	 
+	 public void disableFire(){
+	 
+	 	canFire=false;
+		
+	}
+	
+	public void enableFire(){
+	
+		canFire=true;
+	
+	}
+	
+	public boolean getFireState(){
+	
+		return canFire;
+	
+	}
 
 }

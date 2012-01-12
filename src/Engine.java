@@ -7,22 +7,23 @@ import java.awt.event.KeyListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseListener;
 import java.awt.Font;
 import java.util.Vector;
 
-public class Engine extends JFrame implements Runnable, KeyListener, MouseListener{
+public class Engine extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener{
 
     Player p;
     Enemy[] e;
     Image dbi,dbmi;
     Graphics dbg,dbmg;
     Thread t;
-    int x,y;
+    int x,y,mx,my;
     long time;
     int points,eCount;
     int Difficulty;
-	 LinkedList<Bullet> pB;
+    LinkedList<Bullet> pB;
     private enum States{
 
         MENU,
@@ -55,7 +56,8 @@ public class Engine extends JFrame implements Runnable, KeyListener, MouseListen
         e=new Enemy[eCount];
                 
         addKeyListener(this);
-		  addMouseListener(this);
+        addMouseListener(this);
+        addMouseMotionListener(this);
         addComponentListener(new ComponentAdapter(){
         
             public void componentResized(ComponentEvent ce){
@@ -75,7 +77,7 @@ public class Engine extends JFrame implements Runnable, KeyListener, MouseListen
         for(int i=0;i<e.length;i++)
             e[i]=new Enemy(getSize(),getInsets(),Difficulty);
         
-		  pB=new LinkedList<Bullet>();
+          pB=new LinkedList<Bullet>();
         x=p.getX();
         y=p.getY();
         
@@ -161,13 +163,14 @@ public class Engine extends JFrame implements Runnable, KeyListener, MouseListen
         Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
         p.move();
-
+        if(p.getFireState()&&System.nanoTime()%8L<4)
+            pB.append(p.fire(mx,my));
         pB.first();
         while(pB.getData()!=null){
-		  
+          
             pB.getData().move();
             for(int i=0;i<e.length;i++){
-				
+                
                 if((e[i].getX()-e[i].getR()<pB.getData().getX()+pB.getData().getR()&&
                 e[i].getX()+e[i].getR()>pB.getData().getX()-pB.getData().getR())&&
                 (e[i].getY()-e[i].getR()<pB.getData().getY()+pB.getData().getR()&&
@@ -182,7 +185,7 @@ public class Engine extends JFrame implements Runnable, KeyListener, MouseListen
             }
 
         pB.next();
-		  
+          
         }
             
         for(int i=0;i<e.length;i++){
@@ -287,8 +290,8 @@ public class Engine extends JFrame implements Runnable, KeyListener, MouseListen
             }
 
             if(state==States.MENU) menuState(dbmg);
-				else if(state==States.PAUSED) pausedState(dbmg);
-				else if(state==States.OPTION) optionState(dbmg);
+                else if(state==States.PAUSED) pausedState(dbmg);
+                else if(state==States.OPTION) optionState(dbmg);
             g.drawImage(dbmi,a-60,b-70,this);
 
         }
@@ -499,16 +502,31 @@ public class Engine extends JFrame implements Runnable, KeyListener, MouseListen
     public void mouseClicked(MouseEvent e){}
     public void mouseEntered(MouseEvent e){}
     public void mouseExited(MouseEvent e){}
-	
+    
     public void mousePressed(MouseEvent e){
-	 
-        pB.append(p.fire(e.getX(),e.getY()));
-	 
+     
+        p.setFireState(true);
+        mx=e.getX();
+        my=e.getY();
+     
     }
-	public void mouseReleased(MouseEvent e){
-	 
-		p.enableFire();
-	 
-	}
+    public void mouseReleased(MouseEvent e){
+     
+        p.setFireState(false);
+     
+    }
+
+    public void mouseMoved(MouseEvent e){}
+
+    public void mouseDragged(MouseEvent e){
+
+        if(p.getFireState()){
+
+            mx=e.getX();
+            my=e.getY();
+
+        }
+
+    }
 
 }

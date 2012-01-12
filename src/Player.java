@@ -8,7 +8,7 @@ class Player{
     protected int x,y;
     int r,v;
     boolean left, right, up, down;
-	 boolean canFire;
+    boolean firing;
     int Bx, By;
     Insets i;
 
@@ -18,8 +18,8 @@ class Player{
         right=false;
         up=false;
         down=false;
-		  
-		  canFire=true;
+          
+            firing=false;
 
         Bx=d.width;
         By=d.height;
@@ -161,29 +161,33 @@ class Player{
         y=By/2;
     
     }
-	 
-	 public Bullet fire(int Tx, int Ty){
-	 
-	 	return new Bullet(x,y,Tx,Ty,3,0,-1);
-	 
-	 }
-	 
-	 public void disableFire(){
-	 
-	 	canFire=false;
-		
-	}
-	
-	public void enableFire(){
-	
-		canFire=true;
-	
-	}
-	
-	public boolean getFireState(){
-	
-		return canFire;
-	
-	}
+     
+     public Bullet fire(int Tx, int Ty){
+     
+         return new Bullet(x,y,Tx,Ty,3,0,-1);
+     
+     }
+     
+    /**
+    * Sets the firing state for this player
+    * @param state
+    *  The firing state to set the player to.
+    */
+    public void setFireState(boolean state){
+
+        firing=state;
+
+    }
+
+    /**
+    * Checks if the player is firing
+    * @param - none
+    * @return boolean value denoting whether or not the player is firing.
+    */
+    public boolean getFireState(){
+    
+        return firing;
+    
+    }
 
 }

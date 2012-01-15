@@ -12,7 +12,7 @@ import java.awt.event.MouseListener;
 import java.awt.Font;
 import java.util.Vector;
 
-public class Engine extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener{
+class Engine extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener{
 
     Player p;
     Enemy[] e;
@@ -106,7 +106,7 @@ public class Engine extends JFrame implements Runnable, KeyListener, MouseListen
 
     }
 
-    private void menuState(Graphics g){
+    private void drawMenu(Graphics g){
 
             g.setColor(Color.black);
             g.fillRect(0,0,120,140);
@@ -122,7 +122,7 @@ public class Engine extends JFrame implements Runnable, KeyListener, MouseListen
 
     }
 
-    private void pausedState(Graphics g){
+    private void drawPauseMenu(Graphics g){
 
             g.setColor(Color.black);
             g.fillRect(0,0,120,140);
@@ -141,7 +141,7 @@ public class Engine extends JFrame implements Runnable, KeyListener, MouseListen
 
         }
 
-    private void optionState(Graphics g){
+    private void drawOptions(Graphics g){
 
             g.setColor(Color.black);
             g.fillRect(0,0,120,140);
@@ -158,13 +158,16 @@ public class Engine extends JFrame implements Runnable, KeyListener, MouseListen
 
         }
 
-    private void runState(){
-    
-        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+    void managePlayer(){
 
         p.move();
-        if(p.getFireState()&&System.nanoTime()%8L<4)
+        if(p.fireReady())
             pB.append(p.fire(mx,my));
+
+    }
+
+    void manageBullets(){
+
         pB.first();
         while(pB.getData()!=null){
           
@@ -187,7 +190,11 @@ public class Engine extends JFrame implements Runnable, KeyListener, MouseListen
         pB.next();
           
         }
-            
+
+    }
+
+    void manageEnemies(){
+
         for(int i=0;i<e.length;i++){
 
             if(Difficulty>Enemy.IMMOBILE){
@@ -216,6 +223,16 @@ public class Engine extends JFrame implements Runnable, KeyListener, MouseListen
             }
                 
         }
+
+    }
+
+    private void runState(){
+    
+        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+
+        managePlayer();
+        manageBullets();
+        manageEnemies();
              
         repaint();
             
@@ -289,9 +306,9 @@ public class Engine extends JFrame implements Runnable, KeyListener, MouseListen
 
             }
 
-            if(state==States.MENU) menuState(dbmg);
-                else if(state==States.PAUSED) pausedState(dbmg);
-                else if(state==States.OPTION) optionState(dbmg);
+            if(state==States.MENU) drawMenu(dbmg);
+                else if(state==States.PAUSED) drawPauseMenu(dbmg);
+                else if(state==States.OPTION) drawOptions(dbmg);
             g.drawImage(dbmi,a-60,b-70,this);
 
         }

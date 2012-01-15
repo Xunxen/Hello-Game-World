@@ -9,6 +9,8 @@ class Player{
     int r,v;
     boolean left, right, up, down;
     boolean firing;
+    int rateOfFire;
+    int fireFrame;
     int Bx, By;
     Insets i;
 
@@ -18,9 +20,7 @@ class Player{
         right=false;
         up=false;
         down=false;
-          
-            firing=false;
-
+        firing=false;
         Bx=d.width;
         By=d.height;
         x=Bx/2;
@@ -30,7 +30,16 @@ class Player{
         v=5;
         
         i=(Insets)insets.clone();
+
+        rateOfFire=5;
+        fireFrame=0;
     
+    }
+
+    boolean fireReady(){
+
+       return firing&&(fireFrame++)%rateOfFire==0; 
+
     }
     
     synchronized void upPress(){
@@ -180,14 +189,13 @@ class Player{
     }
 
     /**
-    * Checks if the player is firing
+    * Gets the firing state for this player
     * @param - none
-    * @return boolean value denoting whether or not the player is firing.
     */
     public boolean getFireState(){
-    
+
         return firing;
-    
+
     }
 
 }

@@ -6,14 +6,17 @@ import java.awt.Insets;
 class Player{
 
     protected int x,y;
-    int r,v;
-    boolean left, right, up, down;
-    boolean firing;
-    int rateOfFire;
-    int fireFrame;
-    int Bx, By;
-    Insets i;
+    private int r,v;
+    private boolean left, right, up, down;
+    private boolean firing;
+    private int rateOfFire;
+    private int fireFrame;
+    protected int Bx, By;
+    protected Insets i;
 
+    /**
+	 *
+	 */
     Player(Dimension d,Insets insets){
     
         left=false;

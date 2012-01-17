@@ -14,16 +14,16 @@ import java.util.Vector;
 
 class Engine extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener{
 
-    Player p;
-    Enemy[] e;
-    Image dbi,dbmi;
-    Graphics dbg,dbmg;
-    Thread t;
-    int x,y,mx,my;
-    long time;
-    int points,eCount;
-    int Difficulty;
-    LinkedList<Bullet> pB;
+    protected Player p;
+    protected Enemy[] e;
+    private Image dbi,dbmi;
+    private Graphics dbg,dbmg;
+    private Thread t;
+    private int x,y,mx,my;
+    private long time;
+    private int points,eCount;
+    private int Difficulty;
+    private LinkedList<Bullet> pB;
     private enum States{
 
         MENU,
@@ -34,23 +34,43 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
     };
     private States state,prevState;
     int menuIndex,pauseIndex,optionIndex;
-    private static final String[] MENUOPTIONS={"Play","Options","Quit"};
-    private static final String[] PAUSEOPTIONS={"Resume","Options","Restart","Quit"};
-    private static final String[] OPTIONS={"","Enemies: ","Finish"};
+    //The following fields are protected to allow inheritance.
+    protected String[] menuOptions;
+    protected String[] pauseOptions;
+    protected String[] options;
+    
     private static final String[] DIFFICULTIES={"Immobile","Pathetic","Weak","Easy","Normal","Hard","Impossible"};
 
     Engine(){
         
         Difficulty=Enemy.PATHETIC;
+        menuOptions=new String[3];
+		  menuOptions[0]="Play";
+		  menuOptions[1]="Options";
+		  menuOptions[2]="Quit";
+		  
+		  pauseOptions=new String[4];
+		  pauseOptions[0]="Resume";
+		  pauseOptions[1]="Options";
+		  pauseOptions[2]="Restart";
+		  pauseOptions[3]="Quit";
+		  
+		  options=new String[3];
+		  options[0]=DIFFICULTIES[Difficulty];
+		  options[1]="Enemies: ";
+		  options[2]="Finish";
+		  
         state=States.MENU;
         menuIndex=0;
         pauseIndex=0;
         optionIndex=0;
+		  
         setSize(800,600);
         setBackground(Color.black);
         setFont(new Font("Arial",Font.PLAIN,18));
         setLocation(240,100);
         setVisible(true);
+		  
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         eCount=20;
         e=new Enemy[eCount];
@@ -77,7 +97,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         for(int i=0;i<e.length;i++)
             e[i]=new Enemy(getSize(),getInsets(),Difficulty);
         
-          pB=new LinkedList<Bullet>();
+        pB=new LinkedList<Bullet>();
         x=p.getX();
         y=p.getY();
         
@@ -105,43 +125,63 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         }
 
     }
-
-    private void drawMenu(Graphics g){
+    /**
+    * Draws the main menu to supplied Graphics object.
+    * @param g
+    *  Graphics object to draw the menu to.
+    * @see #drawOptions(Graphics) drawOptions
+    * @see #drawPauseMenu(Graphicsw drawPauseMenu
+    */
+    protected void drawMenu(Graphics g){
 
             g.setColor(Color.black);
             g.fillRect(0,0,120,140);
             if(menuIndex==0) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(MENUOPTIONS[0],10,20);
+            g.drawString(menuOptions[0],10,20);
             if(menuIndex==1) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(MENUOPTIONS[1],10,50);
+            g.drawString(menuOptions[1],10,50);
             if(menuIndex==2) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(MENUOPTIONS[2],10,80);
+            g.drawString(menuOptions[2],10,80);
 
     }
 
-    private void drawPauseMenu(Graphics g){
+    /**
+    * Draws the pause menu to supplied Graphics object.
+    * @param g
+    *  Graphics object to draw the pause menu to.
+    * @see #drawMenu(Graphics) drawMenu
+    * @see #drawOptions(Grpahics) drawOptions
+    */
+    protected void drawPauseMenu(Graphics g){
 
             g.setColor(Color.black);
             g.fillRect(0,0,120,140);
             if(pauseIndex==0) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(PAUSEOPTIONS[0],10,20);
+            g.drawString(pauseOptions[0],10,20);
             if(pauseIndex==1) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(PAUSEOPTIONS[1],10,50);
+            g.drawString(pauseOptions[1],10,50);
             if(pauseIndex==2) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(PAUSEOPTIONS[2],10,80);
+            g.drawString(pauseOptions[2],10,80);
             if(pauseIndex==3) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(PAUSEOPTIONS[3],10,110);
+            g.drawString(pauseOptions[3],10,110);
 
         }
 
-    private void drawOptions(Graphics g){
+    /**
+    * Draws the options menu to supplied Graphics object.
+    * @param g
+    *  Graphics object to draw the options menu to.
+    * @see #drawOptions(Graphics) drawOptions
+    * @see #drawPauseMenu(Grpahics) drawPauseMenu
+    */
+    protected void drawOptions(Graphics g){
 
             g.setColor(Color.black);
             g.fillRect(0,0,120,140);
@@ -151,14 +191,17 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
             g.drawString(DIFFICULTIES[Difficulty],10,20);
             if(optionIndex==1) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(OPTIONS[1]+eCount,10,50);
+            g.drawString(options[1]+eCount,10,50);
             if(optionIndex==2) g.setColor(Color.white);
             else g.setColor(Color.gray);
-            g.drawString(OPTIONS[2],10,80);
+            g.drawString(options[2],10,80);
 
         }
 
-    void managePlayer(){
+    /**
+    *
+    */
+    protected void managePlayer(){
 
         p.move();
         if(p.fireReady())
@@ -193,7 +236,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
     }
 
-    void manageEnemies(){
+    protected void manageEnemies(){
 
         for(int i=0;i<e.length;i++){
 
@@ -315,6 +358,41 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
     
     }
     
+    protected void selectPauseOption(){
+    
+    if(pauseIndex==0){
+
+        prevState=state;
+        state=States.RUNNING;
+        pauseIndex=0;
+
+    }
+    else if(pauseIndex==1){
+    
+        prevState=state;
+        state=States.OPTION;
+        pauseIndex=0;
+        repaint();
+
+    }
+    else if(pauseIndex==2){
+
+        points=0;
+        e=new Enemy[eCount];
+        for(int i=0;i<e.length;i++)
+            e[i]=new Enemy(getSize(),getInsets(),Difficulty);
+ 
+        pB=new LinkedList<Bullet>();
+        p.reset();
+        prevState=state;
+        state=States.RUNNING;
+        pauseIndex=0;
+
+   }
+   else System.exit(0);
+    
+}
+    
     public void keyPressed(KeyEvent ke){
     
         if(state==States.RUNNING){
@@ -332,7 +410,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         else if(state==States.PAUSED){
 
             if(ke.getKeyCode()==KeyEvent.VK_S
-                &&pauseIndex<PAUSEOPTIONS.length-1){
+                &&pauseIndex<pauseOptions.length-1){
 
                 pauseIndex++;
                 repaint();
@@ -353,35 +431,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
             }
             if(ke.getKeyCode()==KeyEvent.VK_ENTER){
 
-                if(pauseIndex==0){
-
-                    prevState=state;
-                    state=States.RUNNING;
-                    pauseIndex=0;
-
-                }
-                else if(pauseIndex==1){
-
-                    prevState=state;
-                    state=States.OPTION;
-                    pauseIndex=0;
-                    repaint();
-
-                }
-                else if(pauseIndex==2){
-
-                    points=0;
-                    e=new Enemy[eCount];
-                    for(int i=0;i<e.length;i++)
-                        e[i]=new Enemy(getSize(),getInsets(),Difficulty);
-                    pB=new LinkedList<Bullet>();
-                    p.reset();
-                    prevState=state;
-                    state=States.RUNNING;
-                    pauseIndex=0;
-
-                }
-                else System.exit(0);
+                selectPauseOption();
 
             }
 
@@ -410,7 +460,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
                 repaint();
 
             }
-            if(ke.getKeyCode()==KeyEvent.VK_S&&optionIndex<OPTIONS.length-1){
+            if(ke.getKeyCode()==KeyEvent.VK_S&&optionIndex<options.length-1){
 
                 optionIndex++;
                 repaint();
@@ -469,7 +519,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         else if(state==States.MENU){
 
             if(ke.getKeyCode()==KeyEvent.VK_S
-                &&menuIndex<MENUOPTIONS.length-1){
+                &&menuIndex<menuOptions.length-1){
 
                 ++menuIndex;
                 repaint();

@@ -11,7 +11,6 @@ class LinkedList<T>{
     
     /**
     * Initializes an empty generic linked list.
-    * @param - none
     * @postcondition
     *  A linked list is created with a null head.
     */
@@ -126,7 +125,6 @@ class LinkedList<T>{
     
     /**
     * Remove the current node.
-    * @param - none
     * @precondition
     *  There is at least one node.
     * @postcondition Current node is removed, head is set to the new first node if
@@ -163,7 +161,6 @@ class LinkedList<T>{
     
     /**
     * moves the cursor to the first node in the linked list.
-    * @param - none
     * @precondition
     *  There is at least one node.
     * @postcondition
@@ -179,7 +176,6 @@ class LinkedList<T>{
     
     /**
     * moves the cursor to the last node in the linked list.
-    * @param - none
     * @precondition
     *  There is at least one node.
     * @postcondition
@@ -195,7 +191,6 @@ class LinkedList<T>{
     
     /**
     * Sets the cursor to the next node in the inked list.
-    * @param - none
     */
     public void next(){
     
@@ -206,7 +201,6 @@ class LinkedList<T>{
     
     /**
     * Get the data from the node the cursor points to
-    * @param - none
     * @return Data stored at cursor node.
     */
     public T getData(){
@@ -218,7 +212,6 @@ class LinkedList<T>{
     
     /**
     * Removes all nodes after the current node.
-    * @param - none
     * @precondition
     *  There are at least 2 nodes
     * @postcondition
@@ -234,7 +227,6 @@ class LinkedList<T>{
     
     /**
     * Removes all nodes before the current node.
-    * @param - none
     * @precondition
     *  There are at least 2 nodes
     * @postcondition

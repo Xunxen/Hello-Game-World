@@ -12,6 +12,10 @@ import java.awt.event.MouseListener;
 import java.awt.Font;
 import java.util.Vector;
 
+/**
+* Game engine
+* @author Xunxen Xyto
+*/
 class Engine extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener{
 
     protected Player p;
@@ -199,7 +203,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         }
 
     /**
-    *
+    * Manages player actions.
     */
     protected void managePlayer(){
 
@@ -209,6 +213,9 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
     }
 
+    /**
+	 * Manages bullet movement and collisions.
+	 */
     void manageBullets(){
 
         pB.first();
@@ -236,6 +243,9 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
     }
 
+    /**
+	 * Manages enemy actions.
+	 */
     protected void manageEnemies(){
 
         for(int i=0;i<e.length;i++){
@@ -269,6 +279,9 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
     }
 
+    /**
+	 * Performs game running state actions.
+	 */
     private void runState(){
     
         Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
@@ -358,6 +371,9 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
     
     }
     
+	 /**
+	 * Performs action indicated by currently selected pause menu option.
+	 */
     protected void selectPauseOption(){
     
     if(pauseIndex==0){

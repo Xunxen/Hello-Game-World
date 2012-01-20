@@ -52,7 +52,6 @@ class Bullet{
     
     /**
     * moves the bullet position closer to the target position using Bresenham's Algorithm.
-    * @param - none
     * @postcondition
     *  Bullet has moved further along the line described by (Bx, By) and (Tx, Ty).
     */
@@ -78,7 +77,6 @@ class Bullet{
     
     /**
     * Gets this bullets x coordinate.
-    * @param - none
     * @return X coordinate of this bullet
     */
     public int getX(){
@@ -89,7 +87,6 @@ class Bullet{
     
     /**
     * Gets this bullets x coordinate.
-    * @param - none
     * @return X coordinate of this bullet
     */
     public int getY(){
@@ -100,7 +97,6 @@ class Bullet{
     
     /**
     * Gets the radius of this bullet.
-    * @param - none
     * @return Radius of this bullet.
     */
     public int getR(){

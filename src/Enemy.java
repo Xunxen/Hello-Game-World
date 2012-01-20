@@ -4,12 +4,17 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.util.Random;
 
+/**
+* Enemy management class
+* @author Xunxen Xyto
+* @see Player
+*/
 class Enemy extends Player{
 
-    int v, r;
-    int Bx, By;
-    int captured;
-    Random ran;
+    private int v, r;
+    private int Bx, By;
+    private int captured;
+    private Random ran;
     
     public static final int IMMOBILE=0;
     public static final int PATHETIC=1;
@@ -60,7 +65,6 @@ class Enemy extends Player{
     *  The Y-coordinate of this enemy's target.
     * @param targetR
     *  The radius of this enemy's target.
-    //weak easy normal hard impossible.
     * @see #easyAI(int,int,int) easyAI
     * @see #hardAI(int,int,int) hardAI
     * @see #immobileAI(int,int,int) immobileAI
@@ -83,7 +87,6 @@ class Enemy extends Player{
     
     /**
     * Set this enemy to a new random location within the play area.
-    * @param - none
     */
     void reset(){
     
@@ -98,6 +101,7 @@ class Enemy extends Player{
     *  Dimensions to resize the play area to.
     * @param in
     *  Insets of the new play area.
+	 * @see Player#resize(Dimension, Insets) Player.resize
     */
     void resize(Dimension d, Insets in){
     

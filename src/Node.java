@@ -28,7 +28,6 @@ class Node<T>{
     
     /**
     * Get the data stored in this node.
-    * @param - none
     * @return current node's data.
     */
     public T getData(){
@@ -77,7 +76,6 @@ class Node<T>{
     
     /**
     * Get the pointer to the previous node.
-    * @param - none
     * @return Pointer to the previous node.
     */
     public Node<T> getPrev(){
@@ -88,7 +86,6 @@ class Node<T>{
     
     /**
     * Get the pointer to the next node.
-    * @param - none
     * @return Pointer to the next node.
     */
     public Node<T> getNext(){

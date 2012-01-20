@@ -3,6 +3,10 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Insets;
 
+/**
+Player management class
+@author Xunxen Xyto
+*/
 class Player{
 
     protected int x,y;
@@ -15,8 +19,12 @@ class Player{
     protected Insets i;
 
     /**
-	 *
-	 */
+    * Creates a new player bounded by the given dimensions and insets.
+    * @param d
+    *  Dimensions of the play area to stay within.
+    * @param insets
+    *  Insets of the play area further bounding it.
+    */
     Player(Dimension d,Insets insets){
     
         left=false;
@@ -39,60 +47,92 @@ class Player{
     
     }
 
+    /**
+    * Determines if this Player is ready to fire based on fire rate and if it's
+    *  Trying to fire.
+    * @return boolean for whether or not the player can fire now.
+    */
     boolean fireReady(){
 
        return firing&&(fireFrame++)%rateOfFire==0; 
 
     }
     
+    /**
+    * Indicates that this player has requested an upward movement.
+    */
     synchronized void upPress(){
     
         up=true;
     
     }
     
-    synchronized void downPress(){
+    /**
+    * Indicates that this player has requested a downward movement.
+    */
+   synchronized void downPress(){
     
         down=true;
     
     }
     
+    /**
+    * Indicates that this player has requested a left movement.
+    */
     synchronized void leftPress(){
     
         left=true;
     
     }
     
+    /**
+    * Indicates that this player has requested a right movement.
+    */
     synchronized void rightPress(){
     
         right=true;
     
     }
-    
+
+    /**
+    * Indicates that this player has stopped requesting a downward movement.
+    */
     synchronized void downRelease(){
     
         down=false;
     
     }
-    
+ 
+    /**
+    * Indicates that this player has stopped requesting an upward movement.
+    */   
     synchronized void upRelease(){
     
         up=false;
     
     }
-    
+ 
+    /**
+    * Indicates that this player has stopped requesting a right movement.
+    */   
     synchronized void rightRelease(){
     
         right=false;
     
     }
-    
+ 
+    /**
+    * Indicates that this player has stopped requesting a left movement.
+    */   
     synchronized void leftRelease(){
     
         left=false;
     
     }
 
+    /**
+	 * Indicates that this player has stopped requesting all horizontal movement 
+	 */
     synchronized void stopX(){
 
         left=false;
@@ -100,6 +140,9 @@ class Player{
 
     }
 
+    /**
+	 * Indicates that this player has stopped requesting all vertical movement 
+	 */
     synchronized void stopY(){
 
         up=false;
@@ -107,6 +150,10 @@ class Player{
 
     }
     
+	 /**
+	 * Performs this player's requested movements if the resulting position will be withing 
+	 *  game boundaries.
+	 */
     void move(){
     
         if(x>Bx-r-i.right) x=Bx-r-i.right;
@@ -134,18 +181,30 @@ class Player{
     
     }
     
+	 /**
+	 * Gets the x coordinate of this player's current position.
+	 * @return x coordinate of this player's current position
+	 */
     int getX(){
     
         return x;
     
     }
-    
+
+    /**
+	 * Gets the y coordinate of this player's current position.
+	 * @return y coordinate of this player's current position
+	 */
     int getY(){
     
         return y;
     
     }
-    
+
+    /**
+	 * Gets this player's radius.
+	 * @return radius of this player.
+	 */
     int getR(){
     
         return r;
@@ -158,7 +217,14 @@ class Player{
         g.fillOval(x-r,y-r,2*r,2*r);
     
     }
-    
+
+    /**
+	 * Resizes this player's boundaries based on provided dimensions and insets.
+	 * @param d
+	 *  new dimensions of the game field
+	 * @param in
+	 *  Insets of the game field to further bound player movement to within view.
+	 */
     void resize(Dimension d,Insets in){
     
         Bx=d.width;
@@ -167,18 +233,30 @@ class Player{
     
     }
     
+	 /**
+	 * reposition this player at the center of the game field.
+	 */
     void reset(){
     
         x=Bx/2;
         y=By/2;
     
     }
+    
+	 /**
+	 * create a bullet with a straight trajectory toward supplied point.
+	 * @param Tx
+	 *  X coordinate of target's position
+	 * @param Ty
+	 *  Y coordinate of target's position.
+	 * @return A new Bullet object at this player's position moving in a straight line toward
+	 *  target position.
+	 */
+    public Bullet fire(int Tx, int Ty){
      
-     public Bullet fire(int Tx, int Ty){
+        return new Bullet(x,y,Tx,Ty,3,0,-1);
      
-         return new Bullet(x,y,Tx,Ty,3,0,-1);
-     
-     }
+    }
      
     /**
     * Sets the firing state for this player
@@ -193,7 +271,7 @@ class Player{
 
     /**
     * Gets the firing state for this player
-    * @param - none
+	 * @return true if the player is requesting to fire, otherwise false.
     */
     public boolean getFireState(){
 

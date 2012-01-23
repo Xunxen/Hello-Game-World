@@ -75,16 +75,66 @@ class Enemy extends Player{
     */
     void AI(int targetX, int targetY, int targetR){
         
-                stopX();
+        easyAI(targetX, targetY, targetR);
+        /*if(v==IMMOBILE)immobileAI(targetX, targetY, targetR);
+        else if(v==PATHETIC)patheticAI(targetX, targetY, targetR);
+        else if(v=WEAK)weakAI(targetX, targetY, targetR);
+        else if(v=EASY)easyAI(targetX, targetY, targetR);
+        else if(v=NORMAL)normalAI(targetX, targetY, targetR);
+        else if(v=HARD)hardAI(targetX, targetY, targetR);
+        else if(v=IMPOSSIBLE)impossibleAI(targetX, targetY, targetR);*/
+   
+    }
+
+    private void easyAI(int targetX, int targetY, int targetR){
+
+        setFireState(true);
+        stopX();
         if(targetX>x+targetR) rightPress();
         else if(targetX<x-targetR) leftPress();
         
-                stopY();
+        stopY();
         if(targetY>y+targetR) downPress();
         else if(targetY<y-targetR) upPress();
-    
+
     }
     
+    private void hardAI(int targetX, int targetY, int targetR){
+
+
+
+    }
+
+    private void immobileAI(int targetX, int targetY, int targetR){
+
+
+
+    }
+
+    private void impossibleAI(int targetX, int targetY, int targetR){
+
+
+
+    }
+    
+    private void normalAI(int targetX, int targetY, int targetR){
+
+
+
+    }
+
+    private void patheticAI(int targetX, int targetY, int targetR){
+
+
+
+    }
+
+    private void weakAI(int targetX, int targetY, int targetR){
+
+
+
+    }
+
     /**
     * Set this enemy to a new random location within the play area.
     */

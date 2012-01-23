@@ -28,6 +28,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
     private int points,eCount;
     private int Difficulty;
     private LinkedList<Bullet> pB;
+    private LinkedList<Bullet> eB;
     private enum States{
 
         MENU,
@@ -49,32 +50,32 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         
         Difficulty=Enemy.PATHETIC;
         menuOptions=new String[3];
-		  menuOptions[0]="Play";
-		  menuOptions[1]="Options";
-		  menuOptions[2]="Quit";
-		  
-		  pauseOptions=new String[4];
-		  pauseOptions[0]="Resume";
-		  pauseOptions[1]="Options";
-		  pauseOptions[2]="Restart";
-		  pauseOptions[3]="Quit";
-		  
-		  options=new String[3];
-		  options[0]=DIFFICULTIES[Difficulty];
-		  options[1]="Enemies: ";
-		  options[2]="Finish";
-		  
+        menuOptions[0]="Play";
+        menuOptions[1]="Options";
+        menuOptions[2]="Quit";
+        
+        pauseOptions=new String[4];
+        pauseOptions[0]="Resume";
+        pauseOptions[1]="Options";
+        pauseOptions[2]="Restart";
+        pauseOptions[3]="Quit";
+        
+        options=new String[3];
+        options[0]=DIFFICULTIES[Difficulty];
+        options[1]="Enemies: ";
+        options[2]="Finish";
+        
         state=States.MENU;
         menuIndex=0;
         pauseIndex=0;
         optionIndex=0;
-		  
+        
         setSize(800,600);
         setBackground(Color.black);
         setFont(new Font("Arial",Font.PLAIN,18));
         setLocation(240,100);
         setVisible(true);
-		  
+        
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         eCount=20;
         e=new Enemy[eCount];
@@ -102,6 +103,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
             e[i]=new Enemy(getSize(),getInsets(),Difficulty);
         
         pB=new LinkedList<Bullet>();
+        eB=new LinkedList<Bullet>();
         x=p.getX();
         y=p.getY();
         
@@ -214,8 +216,8 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
     }
 
     /**
-	 * Manages bullet movement and collisions.
-	 */
+    * Manages bullet movement and collisions.
+    */
     void manageBullets(){
 
         pB.first();
@@ -241,11 +243,20 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
           
         }
 
+        eB.first();
+        while(eB.getData()!=null){
+
+            eB.getData().move();
+
+            eB.next();
+
+        }
+
     }
 
     /**
-	 * Manages enemy actions.
-	 */
+    * Manages enemy actions.
+    */
     protected void manageEnemies(){
 
         for(int i=0;i<e.length;i++){
@@ -262,6 +273,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
                 e[i].AI(x,y,p.getR());
                 e[i].move();
+                if(e[i].fireReady()) eB.append(e[i].fire(x, y));
 
             }
             
@@ -280,8 +292,8 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
     }
 
     /**
-	 * Performs game running state actions.
-	 */
+    * Performs game running state actions.
+    */
     private void runState(){
     
         Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
@@ -314,6 +326,13 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
             while(pB.getData()!=null){
                 pB.getData().paint(g);
                 pB.next();
+            }
+            eB.first();
+            while(eB.getData()!=null){
+
+                eB.getData().paint(g);
+                eB.next();
+
             }
 
         }
@@ -371,9 +390,9 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
     
     }
     
-	 /**
-	 * Performs action indicated by currently selected pause menu option.
-	 */
+    /**
+    * Performs action indicated by currently selected pause menu option.
+    */
     protected void selectPauseOption(){
     
     if(pauseIndex==0){
@@ -397,6 +416,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         e=new Enemy[eCount];
         for(int i=0;i<e.length;i++)
             e[i]=new Enemy(getSize(),getInsets(),Difficulty);
+        eB=new LinkedList<Bullet>();
  
         pB=new LinkedList<Bullet>();
         p.reset();

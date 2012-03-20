@@ -140,8 +140,7 @@ class LinkedList<T>{
     */
     public void remove(){
     
-        if(head==tail&&head==null) return;
-    
+        if(head==null) return;
         if(curr.getPrev()!=null&&curr.getNext()!=null){
         
             Node<T> temp=curr.getNext();
@@ -162,15 +161,15 @@ class LinkedList<T>{
             curr=tail;
         
         }
-        /*else if(size==1){
+        else if(curr.getNext()==null&&curr.getPrev()==null){
         	
         	head=null;
-        	tail=null;
-        	curr=null;
+        	tail=head;
+        	curr=head;
         	size=0;
         	return;
         	
-        }*/
+        }
         --size;
     
     }

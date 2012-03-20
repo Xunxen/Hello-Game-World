@@ -235,16 +235,25 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
             while(e.getData()!=null){
                 
             	Enemy temp=e.getData();
-                if((temp.getX()-temp.getR()<pB.getData().getX()+pB.getData().getR()&&
-                temp.getX()+temp.getR()>pB.getData().getX()-pB.getData().getR())&&
-                (temp.getY()-temp.getR()<pB.getData().getY()+pB.getData().getR()&&
-                temp.getY()+temp.getR()>pB.getData().getY()-pB.getData().getR())){
+            	//try{
+            	    if((temp.getX()-temp.getR()<pB.getData().getX()+pB.getData().getR()&&
+                    temp.getX()+temp.getR()>pB.getData().getX()-pB.getData().getR())&&
+                    (temp.getY()-temp.getR()<pB.getData().getY()+pB.getData().getR()&&
+                    temp.getY()+temp.getR()>pB.getData().getY()-pB.getData().getR())){
 
-                    ++points;
-                    pB.remove();
-                    e.remove();
+                        ++points;
+                        pB.remove();
+                        e.remove();
+                        break;
 
-                }else e.next();
+                    }else e.next();
+                
+            	//}catch(NullPointerException ne){
+            		
+            		//I don't know what to do here...
+            		
+            		
+            	//}
 
             }
 

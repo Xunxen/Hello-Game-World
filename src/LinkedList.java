@@ -33,6 +33,7 @@ class LinkedList<T>{
     */
     public void append(T data){
     
+    	++size;
         if(head==null){
         
             head=new Node<T>(null, data, null);
@@ -47,7 +48,6 @@ class LinkedList<T>{
             curr=tail;
             
         }
-        ++size;
     
     }
     
@@ -60,6 +60,7 @@ class LinkedList<T>{
     */
     public void prepend(T data){
     
+        ++size;
         if(head==null){
         
             head=new Node<T>(null, data, null);
@@ -75,7 +76,6 @@ class LinkedList<T>{
             curr=head;
             
         }
-        ++size;
     
     }
     

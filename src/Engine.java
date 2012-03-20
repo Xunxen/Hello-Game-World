@@ -80,10 +80,11 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         setVisible(true);
         
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        eCount=1;
+        eCount=10;
         e=new LinkedList<Enemy>();
-        for(int i=0;i<eCount;i++)
+        for(int i=0;i<eCount;i++){
         	e.append(new Enemy(getSize(), getInsets(), Difficulty));
+        }
                 
         addKeyListener(this);
         addMouseListener(this);
@@ -106,8 +107,6 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         });
         
         p=new Player(getSize(),getInsets());
-        for(int i=0;i<eCount;i++)
-            e.append(new Enemy(getSize(),getInsets(),Difficulty));
         
         pB=new LinkedList<Bullet>();
         eB=new LinkedList<Bullet>();
@@ -565,8 +564,9 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
                 if(prevState==States.MENU&&eCount!=e.getSize()){
 
                 	e=new LinkedList<Enemy>();
-                    for(int i=0;i<eCount;i++)
+                    for(int i=0;i<eCount;i++){
                         e.append(new Enemy(getSize(),getInsets(),Difficulty));
+                    }
 
                 }
  

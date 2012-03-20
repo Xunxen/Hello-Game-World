@@ -8,6 +8,7 @@ class LinkedList<T>{
     //curr should point to the last element added if the list has not been traversed.
     //tail should always point to the element with next==null.
     private Node<T> head,curr,tail;
+    private int size;
     
     /**
     * Initializes an empty generic linked list.
@@ -19,6 +20,7 @@ class LinkedList<T>{
         head=null;
         curr=head;
         tail=head;
+        size=0;
     
     }
     
@@ -45,6 +47,7 @@ class LinkedList<T>{
             curr=tail;
             
         }
+        ++size;
     
     }
     
@@ -72,6 +75,7 @@ class LinkedList<T>{
             curr=head;
             
         }
+        ++size;
     
     }
     
@@ -96,6 +100,7 @@ class LinkedList<T>{
             temp.getNext().setPrev(temp);
         
         }
+        ++size;
     
     }
     
@@ -120,6 +125,7 @@ class LinkedList<T>{
             temp.getPrev().setNext(temp);
             
         }
+        ++size;
     
     }
     
@@ -134,7 +140,7 @@ class LinkedList<T>{
     */
     public void remove(){
     
-        if(curr==null) return;
+        if(head==tail&&head==null) return;
     
         if(curr.getPrev()!=null&&curr.getNext()!=null){
         
@@ -156,6 +162,16 @@ class LinkedList<T>{
             curr=tail;
         
         }
+        /*else if(size==1){
+        	
+        	head=null;
+        	tail=null;
+        	curr=null;
+        	size=0;
+        	return;
+        	
+        }*/
+        --size;
     
     }
     
@@ -220,6 +236,7 @@ class LinkedList<T>{
     public void removeAfter(){
     
         if(head==tail) return;//no other nodes, nothing to do.
+        --size;
         tail=curr.getNext();
         tail.setNext(null);
     
@@ -235,9 +252,16 @@ class LinkedList<T>{
     public void removeBefore(){
     
         if(head==tail) return;//no other nodes, nothing to do.
+        --size;
         head=curr.getPrev();
         head.setPrev(null);
     
+    }
+    
+    public int getSize(){
+    	
+    	return size;
+    	
     }
 
 }

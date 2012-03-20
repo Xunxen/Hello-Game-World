@@ -9,6 +9,7 @@ import java.util.Random;
 * @author Xunxen Xyto
 * @see Player
 */
+@SuppressWarnings("unused")
 class Enemy extends Player{
 
     private int v, r;
@@ -23,6 +24,7 @@ class Enemy extends Player{
     public static final int NORMAL=4;
     public static final int HARD=5;
     public static final int IMPOSSIBLE=6;
+    private int a, b, err;
 
     /**
     * Initializes this enemy with supplied dimensions, insets, and difficulty.
@@ -37,6 +39,7 @@ class Enemy extends Player{
     Enemy(Dimension d, Insets i, int diff){
     
         super(d,i);
+        err=b-a;
         ran=new Random();
         x=r+ran.nextInt(d.width-2*r);
         y=r+ran.nextInt(d.height-2*r);
@@ -75,7 +78,7 @@ class Enemy extends Player{
     */
     void AI(int targetX, int targetY, int targetR){
         
-        easyAI(targetX, targetY, targetR);
+        impossibleAI(targetX, targetY, targetR);
         /*if(v==IMMOBILE)immobileAI(targetX, targetY, targetR);
         else if(v==PATHETIC)patheticAI(targetX, targetY, targetR);
         else if(v=WEAK)weakAI(targetX, targetY, targetR);
@@ -114,6 +117,29 @@ class Enemy extends Player{
     private void impossibleAI(int targetX, int targetY, int targetR){
 
 
+        a=Math.abs(targetX-x);
+        b=Math.abs(targetY-y);
+        for(int i=0;i<v;i++){
+
+            stopX();
+            stopY();
+            int e2=2*err;
+            if(e2>-b){
+
+                err-=b;
+                if(x<targetX) rightPress();
+                else if(x>targetX) leftPress();
+
+            }
+            if(e2<a){
+
+                err+=a;
+                if(y<targetY) downPress();
+                else if(y>targetY) upPress();
+
+            }
+
+        }
 
     }
     

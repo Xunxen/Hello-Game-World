@@ -5,11 +5,12 @@ import java.awt.Color;
 * Bullet data class
 * @author Xunxen Xyto
 */
+@SuppressWarnings("unused")
 class Bullet{
 
     //initial x,y position, target x,y position, radius
     private int Bx, By, Tx, Ty, r;
-    private int type; //will be used later for seeking missiles and alternate sprites.
+	private int type; //will be used later for seeking missiles and alternate sprites.
     private int lifespan; //How many frames the bullet should last for. -1 lasts until impact.
     private int x, y; //Current position.
     private int a, b; //Gradient values

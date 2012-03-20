@@ -10,7 +10,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseListener;
 import java.awt.Font;
-import java.util.Vector;
 
 /**
 * Game engine
@@ -18,8 +17,12 @@ import java.util.Vector;
 */
 class Engine extends JFrame implements Runnable, KeyListener, MouseListener, MouseMotionListener{
 
-    protected Player p;
-    protected Enemy[] e;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	protected Player p;
+    protected LinkedList<Enemy> e;
     private Image dbi,dbmi;
     private Graphics dbg,dbmg;
     private Thread t;
@@ -77,8 +80,10 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         setVisible(true);
         
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        eCount=20;
-        e=new Enemy[eCount];
+        eCount=1;
+        e=new LinkedList<Enemy>();
+        for(int i=0;i<eCount;i++)
+        	e.append(new Enemy(getSize(), getInsets(), Difficulty));
                 
         addKeyListener(this);
         addMouseListener(this);
@@ -88,9 +93,11 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
             public void componentResized(ComponentEvent ce){
             
                 p.resize(getSize(),getInsets());
-                for(int i=0;i<e.length;i++)
-                    if(e[i]!=null)
-                        e[i].resize(getSize(),getInsets());
+                e.first();
+                while(e.getData()!=null){
+                    e.getData().resize(getSize(),getInsets());
+                    e.next();
+                }
                 dbi=createImage(getSize().width,getSize().height);
                 dbg=dbi.getGraphics();
             
@@ -99,8 +106,8 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         });
         
         p=new Player(getSize(),getInsets());
-        for(int i=0;i<e.length;i++)
-            e[i]=new Enemy(getSize(),getInsets(),Difficulty);
+        for(int i=0;i<eCount;i++)
+            e.append(new Enemy(getSize(),getInsets(),Difficulty));
         
         pB=new LinkedList<Bullet>();
         eB=new LinkedList<Bullet>();
@@ -124,7 +131,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
             else repaint();
 
             try{
-                t.sleep(20);
+                Thread.sleep(20);
             }catch(InterruptedException e){}
 
             Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
@@ -224,18 +231,20 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         while(pB.getData()!=null){
           
             pB.getData().move();
-            for(int i=0;i<e.length;i++){
+            e.first();
+            while(e.getData()!=null){
                 
-                if((e[i].getX()-e[i].getR()<pB.getData().getX()+pB.getData().getR()&&
-                e[i].getX()+e[i].getR()>pB.getData().getX()-pB.getData().getR())&&
-                (e[i].getY()-e[i].getR()<pB.getData().getY()+pB.getData().getR()&&
-                e[i].getY()+e[i].getR()>pB.getData().getY()-pB.getData().getR())){
+            	Enemy temp=e.getData();
+                if((temp.getX()-temp.getR()<pB.getData().getX()+pB.getData().getR()&&
+                temp.getX()+temp.getR()>pB.getData().getX()-pB.getData().getR())&&
+                (temp.getY()-temp.getR()<pB.getData().getY()+pB.getData().getR()&&
+                temp.getY()+temp.getR()>pB.getData().getY()-pB.getData().getR())){
 
                     ++points;
                     pB.remove();
-                    e[i].reset();
+                    e.remove();
 
-                }
+                }else e.next();
 
             }
 
@@ -259,11 +268,12 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
     */
     protected void manageEnemies(){
 
-        for(int i=0;i<e.length;i++){
+    	e.first();
+        while(e.getData()!=null){
 
             if(Difficulty>Enemy.IMMOBILE){
             
-                if(System.nanoTime()-time>1000000000L*(Enemy.IMPOSSIBLE-e[i].getDifficulty())/10.0){
+                if(System.nanoTime()-time>1000000000L*(Enemy.IMPOSSIBLE-e.getData().getDifficulty())/10.0){
             
                     x=p.getX();
                     y=p.getY();
@@ -271,23 +281,26 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
             
                 }
 
-                e[i].AI(x,y,p.getR());
-                e[i].move();
-                if(e[i].fireReady()) eB.append(e[i].fire(x, y));
+                e.getData().AI(x,y,p.getR());
+                e.getData().move();
+                if(e.getData().fireReady()) eB.append(e.getData().fire(x, y));
 
             }
             
-            if((e[i].getX()-e[i].getR()<p.getX()+p.getR()&&
-                e[i].getX()+e[i].getR()>p.getX()-p.getR())&&
-                (e[i].getY()-e[i].getR()<p.getY()+p.getR()&&
-                e[i].getY()+e[i].getR()>p.getY()-p.getR())){
+            if((e.getData().getX()-e.getData().getR()<p.getX()+p.getR()&&
+                e.getData().getX()+e.getData().getR()>p.getX()-p.getR())&&
+                (e.getData().getY()-e.getData().getR()<p.getY()+p.getR()&&
+                e.getData().getY()+e.getData().getR()>p.getY()-p.getR())){
 
                 p.reset();
-                e[i].reset();
                 
             }
+            
+            e.next();
                 
         }
+        
+        e.first();
 
     }
 
@@ -305,7 +318,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         repaint();
             
         try{
-            t.sleep(20);
+            Thread.sleep(20);
         }catch(InterruptedException e){}
         
         Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
@@ -318,10 +331,13 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
             if(g==null) return;
             g.setColor(Color.gray);
-            g.drawString("Defeated "+points+" enemies.",10+getInsets().left,28+getInsets().top);
+            g.drawString("Defeated "+points+" enemies. "+e.getSize()+" Remaining.",10+getInsets().left,28+getInsets().top);
             p.paint(g);
-            for(int i=0;i<e.length;i++)
-                e[i].paint(g);
+            e.first();
+            while(e.getData()!=null){
+                e.getData().paint(g);
+                e.next();
+            }
             pB.first();
             while(pB.getData()!=null){
                 pB.getData().paint(g);
@@ -413,9 +429,9 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
     else if(pauseIndex==2){
 
         points=0;
-        e=new Enemy[eCount];
-        for(int i=0;i<e.length;i++)
-            e[i]=new Enemy(getSize(),getInsets(),Difficulty);
+        e=new LinkedList<Enemy>();
+        for(int i=0;i<eCount;i++)
+            e.append(new Enemy(getSize(),getInsets(),Difficulty));
         eB=new LinkedList<Bullet>();
  
         pB=new LinkedList<Bullet>();
@@ -476,11 +492,11 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
             if(ke.getKeyCode()==KeyEvent.VK_ESCAPE){
 
-                if(prevState==States.MENU&&eCount!=e.length){
+                if(prevState==States.MENU&&eCount!=e.getSize()){
 
-                    e=new Enemy[eCount];
-                    for(int i=0;i<e.length;i++)
-                        e[i]=new Enemy(getSize(),getInsets(),Difficulty);
+                    e=new LinkedList<Enemy>();
+                    for(int i=0;i<eCount;i++)
+                        e.append(new Enemy(getSize(),getInsets(),Difficulty));
 
                 }
                 States temp=state;
@@ -531,15 +547,17 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
             if(ke.getKeyCode()==KeyEvent.VK_ENTER&&optionIndex==2){
 
-                for(int i=0;i<e.length;i++){
-                    e[i].setDifficulty(Difficulty);
+            	e.first();
+                while(e.getData()!=null){
+                    e.getData().setDifficulty(Difficulty);
+                    e.next();
                 }
 
-                if(prevState==States.MENU&&eCount!=e.length){
+                if(prevState==States.MENU&&eCount!=e.getSize()){
 
-                    e=new Enemy[eCount];
-                    for(int i=0;i<e.length;i++)
-                        e[i]=new Enemy(getSize(),getInsets(),Difficulty);
+                	e=new LinkedList<Enemy>();
+                    for(int i=0;i<eCount;i++)
+                        e.append(new Enemy(getSize(),getInsets(),Difficulty));
 
                 }
  

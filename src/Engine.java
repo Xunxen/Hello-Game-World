@@ -37,7 +37,8 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         MENU,
         RUNNING,
         PAUSED,
-        OPTION
+        OPTION,
+        GAMEOVER
 
     };
     private States state,prevState;
@@ -51,7 +52,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
     Engine(){
         
-        Difficulty=Enemy.PATHETIC;
+        Difficulty=Enemy.NORMAL;
         menuOptions=new String[3];
         menuOptions[0]="Play";
         menuOptions[1]="Options";
@@ -80,7 +81,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         setVisible(true);
         
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        eCount=10;
+        eCount=5;
         e=new LinkedList<Enemy>();
         for(int i=0;i<eCount;i++){
         	e.append(new Enemy(getSize(), getInsets(), Difficulty));
@@ -106,7 +107,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         
         });
         
-        p=new Player(getSize(),getInsets());
+        p=new Player(getSize(),getInsets(),3);
         
         pB=new LinkedList<Bullet>();
         eB=new LinkedList<Bullet>();
@@ -234,25 +235,17 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
             while(e.getData()!=null){
                 
             	Enemy temp=e.getData();
-            	//try{
-            	    if((temp.getX()-temp.getR()<pB.getData().getX()+pB.getData().getR()&&
-                    temp.getX()+temp.getR()>pB.getData().getX()-pB.getData().getR())&&
-                    (temp.getY()-temp.getR()<pB.getData().getY()+pB.getData().getR()&&
-                    temp.getY()+temp.getR()>pB.getData().getY()-pB.getData().getR())){
+                if((temp.getX()-temp.getR()<pB.getData().getX()+pB.getData().getR()&&
+                temp.getX()+temp.getR()>pB.getData().getX()-pB.getData().getR())&&
+                (temp.getY()-temp.getR()<pB.getData().getY()+pB.getData().getR()&&
+                temp.getY()+temp.getR()>pB.getData().getY()-pB.getData().getR())){
 
-                        ++points;
-                        pB.remove();
-                        e.remove();
-                        break;
+                    ++points;
+                    pB.remove();
+                    e.remove();
+                    break;
 
-                    }else e.next();
-                
-            	//}catch(NullPointerException ne){
-            		
-            		//I don't know what to do here...
-            		
-            		
-            	//}
+                }else e.next();
 
             }
 
@@ -264,6 +257,16 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         while(eB.getData()!=null){
 
             eB.getData().move();
+            
+            if((p.getX()-p.getR()<eB.getData().getX()+eB.getData().getR()&&
+                p.getX()+p.getR()>eB.getData().getX()-eB.getData().getR())&&
+                (p.getY()-p.getR()<eB.getData().getY()+eB.getData().getR()&&
+                p.getY()+p.getR()>eB.getData().getY()-eB.getData().getR())){
+
+                        eB.remove();
+                        p.reset();
+
+                    }else e.next();
 
             eB.next();
 
@@ -282,16 +285,16 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
             if(Difficulty>Enemy.IMMOBILE){
             
                 if(System.nanoTime()-time>1000000000L*(Enemy.IMPOSSIBLE-e.getData().getDifficulty())/10.0){
-            
+            //This needs to be removed in favor of centralizing the AI to the enemy class
                     x=p.getX();
                     y=p.getY();
                     time=System.nanoTime();
             
                 }
 
-                e.getData().AI(x,y,p.getR());
+                Bullet temp=e.getData().AI(x,y,p.getR());
                 e.getData().move();
-                if(e.getData().fireReady()) eB.append(e.getData().fire(x, y));
+                if(temp!=null) eB.append(temp);
 
             }
             

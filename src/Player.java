@@ -10,6 +10,7 @@ Player management class
 class Player{
 
     protected int x,y;
+    protected int lives;
     private int r,v;
     private boolean left, right, up, down;
     private boolean firing;
@@ -24,8 +25,10 @@ class Player{
     *  Dimensions of the play area to stay within.
     * @param insets
     *  Insets of the play area further bounding it.
+    *  @param l
+    *   Number of lives the player will start with.
     */
-    Player(Dimension d,Insets insets){
+    Player(Dimension d,Insets insets,int l){
     
         left=false;
         right=false;
@@ -36,6 +39,7 @@ class Player{
         By=d.height;
         x=Bx/2;
         y=By/2;
+        lives=l;
         
         r=5;
         v=5;
@@ -278,5 +282,29 @@ class Player{
         return firing;
 
     }
+    
+    public boolean leftDown(){
+    	
+    	return left;
+    	
+    }
 
+    public boolean rightDown(){
+    
+        return right;
+    	
+    }
+    
+    public boolean upDown(){
+    	
+    	return up;
+    	
+    }
+    
+    public boolean downDown(){
+    	
+    	return down;
+    	
+    }
+    
 }

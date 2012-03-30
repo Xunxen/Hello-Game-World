@@ -39,7 +39,7 @@ class Player{
         By=d.height;
         x=Bx/2;
         y=By/2;
-        lives=l;
+        lives=3;
         
         r=5;
         v=5;
@@ -304,6 +304,19 @@ class Player{
     public boolean downDown(){
     	
     	return down;
+    	
+    }
+    
+    public void die(){
+    	
+    	--lives;
+    	reset();
+    	
+    }
+    
+    public int getLives(){
+    	
+    	return lives;
     	
     }
     

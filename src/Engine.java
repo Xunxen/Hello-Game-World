@@ -42,37 +42,141 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
     };
     private States state,prevState;
-    int menuIndex,pauseIndex,optionIndex;
     //The following fields are protected to allow inheritance.
-    protected String[] menuOptions;
-    protected String[] pauseOptions;
-    protected String[] options;
+    protected GameMenu mainMenu;
+    protected GameMenu pauseMenu;
+    protected GameMenu optionsMenu;
+    protected GameMenu gameOverMenu;
     
     private static final String[] DIFFICULTIES={"Immobile","Pathetic","Weak","Easy","Normal","Hard","Impossible"};
 
     Engine(){
         
         Difficulty=Enemy.NORMAL;
-        menuOptions=new String[3];
-        menuOptions[0]="Play";
-        menuOptions[1]="Options";
-        menuOptions[2]="Quit";
-        
-        pauseOptions=new String[4];
-        pauseOptions[0]="Resume";
-        pauseOptions[1]="Options";
-        pauseOptions[2]="Restart";
-        pauseOptions[3]="Quit";
-        
-        options=new String[3];
-        options[0]=DIFFICULTIES[Difficulty];
-        options[1]="Enemies: ";
-        options[2]="Finish";
+        mainMenu=new GameMenu(new Methods(){
+        	public void run(int i){
+        		switch(i){
+        		case 0:
+        			prevState=state;
+                    state=States.RUNNING;
+                    mainMenu.first();
+        		break;
+        		case 1:
+        			prevState=state;
+                    state=States.OPTION;
+                    mainMenu.first();
+        		break;
+        		case 2:
+        			System.exit(0);
+        		break;
+        		default:
+        			
+        		break;
+        		}
+        	}
+        },"Play","Options","Quit");
+        pauseMenu=new GameMenu(new Methods(){
+        	public void run(int i){
+        		switch(i){
+        		case 0:
+        			prevState=state;
+        	        state=States.RUNNING;
+        	        pauseMenu.first();
+        		break;
+        		case 1:
+        			prevState=state;
+        	        state=States.OPTION;
+        	        pauseMenu.first();
+        	        repaint();
+        		break;
+        		case 2:
+        			points=0;
+        	        e=new LinkedList<Enemy>();
+        	        for(int j=0;j<eCount;j++)
+        	            e.append(new Enemy(getSize(),getInsets(),Difficulty));
+        	        eB=new LinkedList<Bullet>();
+        	 
+        	        pB=new LinkedList<Bullet>();
+        	        p.reset();
+        	        prevState=state;
+        	        state=States.RUNNING;
+        	        pauseMenu.first();
+        		break;
+        		case 3:
+        			System.exit(0);
+        		break;
+        		default:
+        			
+        		break;
+        		}
+        	}
+        },"Resume","Options","Restart","Quit");
+        eCount=5;
+        optionsMenu=new GameMenu(new Methods(){
+        	public void run(int i){
+        		switch(i){
+        		case 0:
+        			e.first();
+                    while(e.getData()!=null){
+                        e.getData().setDifficulty(Difficulty);
+                        e.next();
+                    }
+        		break;
+        		case 1:
+        			
+        		break;
+        		case 2:
+        			if(prevState==States.MENU&&eCount!=e.getSize()){
+
+                    	e=new LinkedList<Enemy>();
+                        for(int j=0;j<eCount;j++){
+                            e.append(new Enemy(getSize(),getInsets(),Difficulty));
+                        }
+
+                    }
+                    States temp=state;
+                    state=prevState;
+                    prevState=temp;
+                    optionsMenu.first();
+        		break;
+        		default:
+        			
+        		break;
+        		}
+        	}
+        },DIFFICULTIES[Difficulty],"Enemies: "+eCount,"Finish");
+        gameOverMenu=new GameMenu(new Methods(){
+        	public void run(int i){
+        		switch(i){
+        		case 0:
+        			points=0;
+        	        e=new LinkedList<Enemy>();
+        	        for(int j=0;j<eCount;j++)
+        	            e.append(new Enemy(getSize(),getInsets(),Difficulty));
+        	        eB=new LinkedList<Bullet>();
+        	 
+        	        pB=new LinkedList<Bullet>();
+        	        p.reset();
+        	        prevState=state;
+        	        state=States.RUNNING;
+        	        pauseMenu.first();
+        		break;
+        		case 1:
+        			prevState=state;
+        			state=States.MENU;
+        			gameOverMenu.first();
+        		break;
+        		case 2:
+        			System.exit(0);
+        		break;
+        		default:
+        			
+        		break;
+        		}
+        	}
+        },"Restart","Main Menu","Quit");
         
         state=States.MENU;
-        menuIndex=0;
-        pauseIndex=0;
-        optionIndex=0;
         
         setSize(800,600);
         setBackground(Color.black);
@@ -81,12 +185,12 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         setVisible(true);
         
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        eCount=5;
         e=new LinkedList<Enemy>();
         for(int i=0;i<eCount;i++){
         	e.append(new Enemy(getSize(), getInsets(), Difficulty));
         }
                 
+        //Should add a separate class for these to make engine not need to be inherited.
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -138,78 +242,6 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         }
 
     }
-    /**
-    * Draws the main menu to supplied Graphics object.
-    * @param g
-    *  Graphics object to draw the menu to.
-    * @see #drawOptions(Graphics) drawOptions
-    * @see #drawPauseMenu(Graphicsw drawPauseMenu
-    */
-    protected void drawMenu(Graphics g){
-
-            g.setColor(Color.black);
-            g.fillRect(0,0,120,140);
-            if(menuIndex==0) g.setColor(Color.white);
-            else g.setColor(Color.gray);
-            g.drawString(menuOptions[0],10,20);
-            if(menuIndex==1) g.setColor(Color.white);
-            else g.setColor(Color.gray);
-            g.drawString(menuOptions[1],10,50);
-            if(menuIndex==2) g.setColor(Color.white);
-            else g.setColor(Color.gray);
-            g.drawString(menuOptions[2],10,80);
-
-    }
-
-    /**
-    * Draws the pause menu to supplied Graphics object.
-    * @param g
-    *  Graphics object to draw the pause menu to.
-    * @see #drawMenu(Graphics) drawMenu
-    * @see #drawOptions(Grpahics) drawOptions
-    */
-    protected void drawPauseMenu(Graphics g){
-
-            g.setColor(Color.black);
-            g.fillRect(0,0,120,140);
-            if(pauseIndex==0) g.setColor(Color.white);
-            else g.setColor(Color.gray);
-            g.drawString(pauseOptions[0],10,20);
-            if(pauseIndex==1) g.setColor(Color.white);
-            else g.setColor(Color.gray);
-            g.drawString(pauseOptions[1],10,50);
-            if(pauseIndex==2) g.setColor(Color.white);
-            else g.setColor(Color.gray);
-            g.drawString(pauseOptions[2],10,80);
-            if(pauseIndex==3) g.setColor(Color.white);
-            else g.setColor(Color.gray);
-            g.drawString(pauseOptions[3],10,110);
-
-        }
-
-    /**
-    * Draws the options menu to supplied Graphics object.
-    * @param g
-    *  Graphics object to draw the options menu to.
-    * @see #drawOptions(Graphics) drawOptions
-    * @see #drawPauseMenu(Grpahics) drawPauseMenu
-    */
-    protected void drawOptions(Graphics g){
-
-            g.setColor(Color.black);
-            g.fillRect(0,0,120,140);
-            g.setColor(Color.white);
-            if(optionIndex==0) g.setColor(Color.white);
-            else g.setColor(Color.gray);
-            g.drawString(DIFFICULTIES[Difficulty],10,20);
-            if(optionIndex==1) g.setColor(Color.white);
-            else g.setColor(Color.gray);
-            g.drawString(options[1]+eCount,10,50);
-            if(optionIndex==2) g.setColor(Color.white);
-            else g.setColor(Color.gray);
-            g.drawString(options[2],10,80);
-
-        }
 
     /**
     * Manages player actions.
@@ -243,6 +275,10 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
                     ++points;
                     pB.remove();
                     e.remove();
+                    if(e.getSize()==0){
+                    	prevState=state;
+                    	state=States.GAMEOVER;
+                    }
                     break;
 
                 }else e.next();
@@ -264,7 +300,11 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
                 p.getY()+p.getR()>eB.getData().getY()-eB.getData().getR())){
 
                         eB.remove();
-                        p.reset();
+                        p.die();
+                        if(p.getLives()<0){
+                        	prevState=state;
+                        	state=States.GAMEOVER;
+                        }
 
                     }else e.next();
 
@@ -408,53 +448,16 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
             }
 
-            if(state==States.MENU) drawMenu(dbmg);
-                else if(state==States.PAUSED) drawPauseMenu(dbmg);
-                else if(state==States.OPTION) drawOptions(dbmg);
+            if(state==States.MENU) mainMenu.draw(dbmg);
+                else if(state==States.PAUSED) pauseMenu.draw(dbmg);
+                else if(state==States.OPTION) optionsMenu.draw(dbmg);
+                else if(state==States.GAMEOVER) gameOverMenu.draw(dbmg);
             g.drawImage(dbmi,a-60,b-70,this);
 
         }
     
     }
     
-    /**
-    * Performs action indicated by currently selected pause menu option.
-    */
-    protected void selectPauseOption(){
-    
-    if(pauseIndex==0){
-
-        prevState=state;
-        state=States.RUNNING;
-        pauseIndex=0;
-
-    }
-    else if(pauseIndex==1){
-    
-        prevState=state;
-        state=States.OPTION;
-        pauseIndex=0;
-        repaint();
-
-    }
-    else if(pauseIndex==2){
-
-        points=0;
-        e=new LinkedList<Enemy>();
-        for(int i=0;i<eCount;i++)
-            e.append(new Enemy(getSize(),getInsets(),Difficulty));
-        eB=new LinkedList<Bullet>();
- 
-        pB=new LinkedList<Bullet>();
-        p.reset();
-        prevState=state;
-        state=States.RUNNING;
-        pauseIndex=0;
-
-   }
-   else System.exit(0);
-    
-}
     
     public void keyPressed(KeyEvent ke){
     
@@ -472,29 +475,26 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         }
         else if(state==States.PAUSED){
 
-            if(ke.getKeyCode()==KeyEvent.VK_S
-                &&pauseIndex<pauseOptions.length-1){
+            if(ke.getKeyCode()==KeyEvent.VK_S){
 
-                pauseIndex++;
+                pauseMenu.next();
                 repaint();
 
             }
-            if(ke.getKeyCode()==KeyEvent.VK_W&&pauseIndex>0){
+            if(ke.getKeyCode()==KeyEvent.VK_W){
 
-                pauseIndex--;
+                pauseMenu.prev();
                 repaint();
 
             }
             if(ke.getKeyCode()==KeyEvent.VK_ESCAPE){
 
-                prevState=state;
-                state=States.RUNNING;
-                pauseIndex=0;
+                pauseMenu.menuActions.run(0);
 
             }
             if(ke.getKeyCode()==KeyEvent.VK_ENTER){
 
-                selectPauseOption();
+                pauseMenu.run();
 
             }
 
@@ -503,80 +503,56 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
             if(ke.getKeyCode()==KeyEvent.VK_ESCAPE){
 
-                if(prevState==States.MENU&&eCount!=e.getSize()){
-
-                    e=new LinkedList<Enemy>();
-                    for(int i=0;i<eCount;i++)
-                        e.append(new Enemy(getSize(),getInsets(),Difficulty));
-
-                }
-                States temp=state;
-                state=prevState;
-                prevState=temp;
-                optionIndex=0;
+                optionsMenu.menuActions.run(2);
                 repaint();
 
             }
-            if(ke.getKeyCode()==KeyEvent.VK_W&&optionIndex>0){
+            if(ke.getKeyCode()==KeyEvent.VK_W){
 
-                optionIndex--;
+                optionsMenu.prev();
                 repaint();
 
             }
-            if(ke.getKeyCode()==KeyEvent.VK_S&&optionIndex<options.length-1){
+            if(ke.getKeyCode()==KeyEvent.VK_S){
 
-                optionIndex++;
+                optionsMenu.next();
                 repaint();
 
             }
-            if(ke.getKeyCode()==KeyEvent.VK_A&&optionIndex==0&&Difficulty>Enemy.IMMOBILE){
+            if(ke.getKeyCode()==KeyEvent.VK_A&&optionsMenu.getIndex()==0&&Difficulty>Enemy.IMMOBILE){
 
                 Difficulty--;
+                optionsMenu.setItems(DIFFICULTIES[Difficulty],"Enemies: "+eCount,"Finish");
                 repaint();
 
             }
-            if(ke.getKeyCode()==KeyEvent.VK_D&&optionIndex==0&&Difficulty<Enemy.IMPOSSIBLE){
+            if(ke.getKeyCode()==KeyEvent.VK_D&&optionsMenu.getIndex()==0&&Difficulty<Enemy.IMPOSSIBLE){
 
                 ++Difficulty;
+                optionsMenu.setItems(DIFFICULTIES[Difficulty],"Enemies: "+eCount,"Finish");
                 repaint();
 
             }
 
-            if(ke.getKeyCode()==KeyEvent.VK_A&&optionIndex==1&&eCount>1){
+            if(ke.getKeyCode()==KeyEvent.VK_A&&optionsMenu.getIndex()==1&&eCount>1){
 
                 --eCount;
+                optionsMenu.setItems(DIFFICULTIES[Difficulty],"Enemies: "+eCount,"Finish");
                 repaint();
 
             }
 
-            if(ke.getKeyCode()==KeyEvent.VK_D&&optionIndex==1&&eCount<100){
+            if(ke.getKeyCode()==KeyEvent.VK_D&&optionsMenu.getIndex()==1&&eCount<100){
 
                 ++eCount;
+                optionsMenu.setItems(DIFFICULTIES[Difficulty],"Enemies: "+eCount,"Finish");
                 repaint();
 
             }
 
-            if(ke.getKeyCode()==KeyEvent.VK_ENTER&&optionIndex==2){
+            if(ke.getKeyCode()==KeyEvent.VK_ENTER){
 
-            	e.first();
-                while(e.getData()!=null){
-                    e.getData().setDifficulty(Difficulty);
-                    e.next();
-                }
-
-                if(prevState==States.MENU&&eCount!=e.getSize()){
-
-                	e=new LinkedList<Enemy>();
-                    for(int i=0;i<eCount;i++){
-                        e.append(new Enemy(getSize(),getInsets(),Difficulty));
-                    }
-
-                }
- 
-                States temp=state;
-                state=prevState;
-                prevState=temp;
-                optionIndex=0;
+            	optionsMenu.run();
                 repaint();
 
             }
@@ -584,33 +560,33 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         }
         else if(state==States.MENU){
 
-            if(ke.getKeyCode()==KeyEvent.VK_S
-                &&menuIndex<menuOptions.length-1){
+            if(ke.getKeyCode()==KeyEvent.VK_S){
 
-                ++menuIndex;
+            	mainMenu.next();
                 repaint();
-
+                
             }
-            if(ke.getKeyCode()==KeyEvent.VK_W&&menuIndex>0){
 
-                menuIndex--;
+            if(ke.getKeyCode()==KeyEvent.VK_W){
+
+                mainMenu.prev();
                 repaint();
 
             }
             if(ke.getKeyCode()==KeyEvent.VK_ENTER){
 
-                if(menuIndex==0){
+                if(mainMenu.getIndex()==0){
 
                     prevState=state;
                     state=States.RUNNING;
-                    menuIndex=0;
+                    mainMenu.first();
 
                 }
-                else if(menuIndex==1){
+                else if(mainMenu.getIndex()==1){
 
                     prevState=state;
                     state=States.OPTION;
-                    menuIndex=0;
+                    mainMenu.first();
                     repaint();
 
                 }
@@ -618,6 +594,10 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
             }
 
+        }
+        else if(state==States.GAMEOVER){
+        	
+        	
         }
         
     }

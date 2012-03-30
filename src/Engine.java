@@ -35,6 +35,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
     private enum States{
 
         MENU,
+        PREPARE,
         RUNNING,
         PAUSED,
         OPTION,
@@ -58,8 +59,14 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         		switch(i){
         		case 0:
         			prevState=state;
-                    state=States.RUNNING;
+                    state=States.PREPARE;
                     mainMenu.first();
+                    e=new LinkedList<Enemy>();
+                    for(int j=0;j<eCount;j++){
+                    	e.append(new Enemy(getSize(), getInsets(), Difficulty));
+                    }
+                    pB=new LinkedList<Bullet>();
+                    eB=new LinkedList<Bullet>();
         		break;
         		case 1:
         			prevState=state;
@@ -80,7 +87,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         		switch(i){
         		case 0:
         			prevState=state;
-        	        state=States.RUNNING;
+        	        state=States.PREPARE;
         	        pauseMenu.first();
         		break;
         		case 1:
@@ -158,7 +165,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         	        pB=new LinkedList<Bullet>();
         	        p.reset();
         	        prevState=state;
-        	        state=States.RUNNING;
+        	        state=States.PREPARE;
         	        pauseMenu.first();
         		break;
         		case 1:
@@ -185,10 +192,6 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         setVisible(true);
         
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        e=new LinkedList<Enemy>();
-        for(int i=0;i<eCount;i++){
-        	e.append(new Enemy(getSize(), getInsets(), Difficulty));
-        }
                 
         //Should add a separate class for these to make engine not need to be inherited.
         addKeyListener(this);
@@ -378,7 +381,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
     public void paint(Graphics g){
     
-        if(state==States.RUNNING){
+        if(state==States.RUNNING||state==States.PREPARE){
 
             if(g==null) return;
             g.setColor(Color.gray);
@@ -427,7 +430,7 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         
         }
 
-        if(state==States.RUNNING){
+        if(state==States.RUNNING||state==States.PREPARE){
 
             dbg.setColor(getBackground());
             dbg.fillRect(0,0,getSize().width,getSize().height);
@@ -472,6 +475,36 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
                 state=States.PAUSED;
 
             }
+        }
+        else if(state==States.PREPARE){
+        	
+        	if(ke.getKeyCode()==KeyEvent.VK_W){
+        		p.upPress();
+        		state=States.RUNNING;
+        		prevState=States.PREPARE;
+        	}
+            if(ke.getKeyCode()==KeyEvent.VK_S){
+            	p.downPress();
+        		state=States.RUNNING;
+        		prevState=States.PREPARE;
+            }
+            if(ke.getKeyCode()==KeyEvent.VK_A){
+            	p.leftPress();
+        		state=States.RUNNING;
+        		prevState=States.PREPARE;
+            }
+            if(ke.getKeyCode()==KeyEvent.VK_D){
+            	p.rightPress();
+        		state=States.RUNNING;
+        		prevState=States.PREPARE;
+            }
+            if(ke.getKeyCode()==KeyEvent.VK_ESCAPE){
+
+                prevState=state;
+                state=States.PAUSED;
+
+            }
+        	
         }
         else if(state==States.PAUSED){
 
@@ -574,29 +607,31 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
 
             }
             if(ke.getKeyCode()==KeyEvent.VK_ENTER){
-
-                if(mainMenu.getIndex()==0){
-
-                    prevState=state;
-                    state=States.RUNNING;
-                    mainMenu.first();
-
-                }
-                else if(mainMenu.getIndex()==1){
-
-                    prevState=state;
-                    state=States.OPTION;
-                    mainMenu.first();
-                    repaint();
-
-                }
-                else System.exit(0);
+            	
+            	mainMenu.run();
 
             }
 
         }
         else if(state==States.GAMEOVER){
         	
+        	if(ke.getKeyCode()==KeyEvent.VK_ENTER){
+        		
+        		gameOverMenu.run();
+        		
+        	}
+        	else if(ke.getKeyCode()==KeyEvent.VK_W){
+        		
+        		gameOverMenu.prev();
+        		repaint();
+        		
+        	}
+        	else if(ke.getKeyCode()==KeyEvent.VK_S){
+        		
+        		gameOverMenu.next();
+        		repaint();
+        		
+        	}
         	
         }
         
@@ -621,6 +656,10 @@ class Engine extends JFrame implements Runnable, KeyListener, MouseListener, Mou
         p.setFireState(true);
         mx=e.getX();
         my=e.getY();
+        if(state==States.PREPARE){
+        	state=States.RUNNING;
+        	prevState=States.PREPARE;
+        }
      
     }
     public void mouseReleased(MouseEvent e){
